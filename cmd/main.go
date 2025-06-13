@@ -5,8 +5,12 @@ import (
 	"log/slog"
 	"os"
 	"short-url/internal/config"
+	mwLogger "short-url/internal/http-server/middleware"
 	"short-url/internal/lib/sl"
 	"short-url/internal/storage/sqlite"
+
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
 )
 
 const (
@@ -47,6 +51,9 @@ func main() {
 	fmt.Println(storage.DeleteURL("3"))
 
 	//router chi
+	router := chi.NewRouter()
+	router.Use(middleware.RequestID)
+	router.Use(mwLogger.New(log))
 
 	//server
 
