@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"short-url/internal/config"
+	"short-url/internal/http-server/handlers/url/save"
 	mwLogger "short-url/internal/http-server/middleware"
 	"short-url/internal/lib/sl"
 	"short-url/internal/storage/sqlite"
@@ -48,13 +50,28 @@ func main() {
 		log.Error("can't connect to storage", sl.Err(err))
 		os.Exit(1)
 	}
-	fmt.Println(storage.DeleteURL("3"))
 
 	//router chi
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(mwLogger.New(log))
 
-	//server
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 
+	router.Post("/url", save.New(log, storage))
+
+	//server
+	log.Info("starting server", slog.String("address", cfg.Address))
+	srv := &http.Server{
+		Addr:         cfg.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
+	}
+
+	if err = srv.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
 }
