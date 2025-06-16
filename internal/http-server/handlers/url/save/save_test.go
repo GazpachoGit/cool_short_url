@@ -11,6 +11,7 @@ import (
 	"short-url/internal/lib/logger/handlers/silentlog"
 	"testing"
 
+	mock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -36,19 +37,19 @@ func TestSaveHandler(t *testing.T) {
 			name:      "Empty url",
 			url:       "",
 			alias:     "some_alias",
-			respError: "field URL is a required field",
+			respError: "invalid body,field URL is a required field",
 		},
 		{
 			name:      "Invalid url",
 			url:       "invalid url text",
 			alias:     "some_alias",
-			respError: "field URL is a valid field",
+			respError: "invalid body,field URL is not in URL format",
 		},
 		{
 			name:      "SaveURL Error",
 			url:       "http://google.com",
 			alias:     "some_alias",
-			respError: "field to add url",
+			respError: "failed to add url",
 			mockError: errors.New("unexpected error"),
 		},
 	}
@@ -59,7 +60,7 @@ func TestSaveHandler(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			urlSaverMock := mocks.NewURLSaver(t)
+			urlSaverMock := save.NewMockURLSaver(t)
 
 			/*
 				explanation of the condition:
@@ -72,7 +73,7 @@ func TestSaveHandler(t *testing.T) {
 					mockError = nil - when we want to return err from storage
 			*/
 			if tc.respError == "" || tc.mockError != nil {
-				urlSaverMock.On("SaveURL", tc.url, mockAnythingOfType("string")).Return(int64(1), tc.mockError).Once()
+				urlSaverMock.On("SaveURL", tc.url, mock.AnythingOfType("string")).Return(int64(1), tc.mockError).Once()
 			}
 
 			handler := save.New(silentlog.NewSilentLogger(), urlSaverMock)
@@ -90,7 +91,7 @@ func TestSaveHandler(t *testing.T) {
 
 			var resp save.Response
 
-			require.NoError(t, json.Unmarshal([]byte(rr.Body.String()), &resp))
+			require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resp))
 
 			require.Equal(t, tc.respError, resp.Error)
 
