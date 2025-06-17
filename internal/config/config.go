@@ -18,6 +18,8 @@ type HTTPServer struct {
 	Address     string        `yaml:"address" env-default:"localhost:9000"`
 	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+	User        string        `yaml:"user" env-requered:"true"`
+	Password    string        `yaml:"password" env-requered:"true" env:"HTTP_SERVER_PASSWORD"`
 }
 
 // functions with the 'Must...' name usually return panic

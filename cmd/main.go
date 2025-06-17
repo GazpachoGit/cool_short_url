@@ -56,10 +56,18 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(mwLogger.New(log))
-
 	router.Use(middleware.Recoverer)
 	//to get params from url
 	router.Use(middleware.URLFormat)
+
+	// router.Route("/url", func(r chi.Router) {
+	// 	//'short-url' - title in browser
+	// 	r.Use(middleware.BasicAuth("short-url", map[string]string{
+	// 		cfg.HTTPServer.User: cfg.HTTPServer.Password,
+	// 	}))
+
+	// 	r.Post("/", save.New(log, storage))
+	// })
 
 	router.Post("/url", save.New(log, storage))
 	router.Get("/{alias}", redirect.New(log, storage))

@@ -14,3 +14,6 @@ packages:
   short-url/internal/http-server/handlers/url/save:
     config:
       all: true
+  short-url/internal/http-server/handlers/url/redirect:
+    config:
+      all: true
