@@ -1,4 +1,4 @@
-# URL shortener
+# URL shortener REST API service
 ## Features
 - logger with log/slog
 - sqlite
