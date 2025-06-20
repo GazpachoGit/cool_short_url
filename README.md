@@ -2,5 +2,5 @@
 ## Features
 - logger with log/slog
 - sqlite
-- unit tests
+- table unit tests
 - functional tests
