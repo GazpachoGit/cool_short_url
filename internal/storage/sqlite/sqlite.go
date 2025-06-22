@@ -37,14 +37,15 @@ func New(storagePath string) (*Storage, error) {
 		id INTEGER PRIMARY KEY,
 		alias TEXT NOT NULL UNIQUE,
 		url TEXT NOT NULL);
-	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
 
 	CREATE TABLE IF NOT EXISTS events(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		event_type TEXT NOT NULL,
 		payload TEXT NOT NULL,
-		status TEXT NOT NULL DEAFULT 'new' CHECK (status IN ('new', 'done')),
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`)
+		status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'done')),
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+		
+	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);`)
 	//TODO: add reserved_to TIMESTAMP DEFAULT NULL
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
