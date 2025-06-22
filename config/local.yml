@@ -6,3 +6,4 @@ http_server:
   idle_timeout: 60s
   user: "user"
   password: "password"
+  event_sender_period: 5s

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"short-url/internal/http-server/handlers/url/save"
 	mwLogger "short-url/internal/http-server/middleware"
 	"short-url/internal/lib/sl"
+	eventsender "short-url/internal/services/event-sender"
 	"short-url/internal/storage/sqlite"
 
 	"github.com/go-chi/chi/middleware"
@@ -81,6 +83,9 @@ func main() {
 		WriteTimeout: cfg.HTTPServer.Timeout,
 		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
 	}
+
+	sender := eventsender.New(storage, log)
+	sender.StartProcessEvents(context.Background(), cfg.HTTPServer.EventSenderPeriod)
 
 	if err = srv.ListenAndServe(); err != nil {
 		log.Error("failed to start server")
