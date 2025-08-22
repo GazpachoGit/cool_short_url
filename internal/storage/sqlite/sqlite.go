@@ -32,7 +32,7 @@ func New(storagePath string) (*Storage, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	stmt, err := db.Prepare(`
+	stmt := `
 	CREATE TABLE IF NOT EXISTS url(
 		id INTEGER PRIMARY KEY,
 		alias TEXT NOT NULL UNIQUE,
@@ -45,12 +45,9 @@ func New(storagePath string) (*Storage, error) {
 		status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'done')),
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 		
-	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);`)
+	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);`
 	//TODO: add reserved_to TIMESTAMP DEFAULT NULL
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	_, err = stmt.Exec()
+	_, err = db.Exec(stmt)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

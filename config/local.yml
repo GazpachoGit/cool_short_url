@@ -7,3 +7,8 @@ http_server:
   user: "user"
   password: "password"
   event_sender_period: 5s
+clients:
+  sso:
+    address: "localhost:44044"
+    timeout: 5s
+    retries-count: 3
