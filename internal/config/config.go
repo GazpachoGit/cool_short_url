@@ -12,6 +12,8 @@ type Config struct {
 	Env         string `yaml:"env" env:"ENV" env-default:"local"`
 	StoragePath string `yaml:"storage_path" env-requered:"true"`
 	HTTPServer  `yaml:"http_server"`
+	Clients     ClientConfig `yaml:"clients"`
+	AppSecret   string       `yaml:"storage_path" env-requered:"true" env:"APP_SECRET"`
 }
 
 type HTTPServer struct {
@@ -21,6 +23,16 @@ type HTTPServer struct {
 	User              string        `yaml:"user" env-requered:"true"`
 	Password          string        `yaml:"password" env-requered:"true" env:"HTTP_SERVER_PASSWORD"`
 	EventSenderPeriod time.Duration `yaml:"event_sender_period" env-default:"5s"`
+}
+
+type Client struct {
+	Address      string        `yaml:"address"`
+	Timeout      time.Duration `yaml:"timeout"`
+	RetriesCount int           `yaml:"retriesCount"`
+}
+
+type ClientConfig struct {
+	SSO Client `yaml:"sso"`
 }
 
 // functions with the 'Must...' name usually return panic

@@ -1,6 +1,6 @@
 module short-url
 
-go 1.23.0
+go 1.24.4
 
 require (
 	github.com/go-chi/chi v1.5.5
@@ -13,7 +13,15 @@ require (
 )
 
 require (
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250528174236-200df99c418a // indirect
+	google.golang.org/grpc v1.74.2 // indirect
+	google.golang.org/protobuf v1.36.7 // indirect
+)
+
+require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/GazpachoGit/proto v0.1.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2 // indirect
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect

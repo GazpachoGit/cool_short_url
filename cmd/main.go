@@ -14,6 +14,8 @@ import (
 	eventsender "short-url/internal/services/event-sender"
 	"short-url/internal/storage/sqlite"
 
+	ssogrpc "short-url/internal/clients/sso/grpc"
+
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
@@ -46,6 +48,20 @@ func main() {
 	//TODO: remove
 	log.Debug("Logger ready")
 	log.Info("env is", slog.String("env", cfg.Env))
+
+	//init grpc client
+	ssoClient, err := ssogrpc.New(
+		context.Background(),
+		log,
+		cfg.Clients.SSO.Address,
+		cfg.Clients.SSO.Timeout,
+		cfg.Clients.SSO.RetriesCount,
+	)
+	if err != nil {
+		log.Error("failed to init sso client", sl.Err(err))
+		os.Exit(1)
+	}
+	ssoClient.IsAdmin(context.Background(), 1)
 
 	//storage sqllite
 	storage, err := sqlite.New(cfg.StoragePath)
